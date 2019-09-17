@@ -8,18 +8,19 @@ const resolvers = {
     feed: (root, args, context) => context.prisma.links(),
   },
   Mutation: {
-    post: (_, { url, description }, context) => {
+    post: (root, { url, description }, context) => {
       return context.prisma.createLink({ url, description })
     },
 
-    updateLink: (_, { id, url, description }, context) => {
-      return context.prisma.updateLink({ id, url, description })
+    updateLink: (root, { id, url, description }, context) => {
+      return context.prisma.updateLink({
+        data: { url, description },
+        where: { id }
+      })
     },
 
-    deleteLink: (parent, { id }) => {
-      const removedLink = links.find((link) => link.id === id);
-      links = links.filter((link) => link.id !== id)
-      return removedLink
+    deleteLink: (root, { id }, context) => {
+      return context.prisma.deleteLink({ id })
     }
   },
 }
